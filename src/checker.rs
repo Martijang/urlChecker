@@ -1,5 +1,6 @@
 use clap::Parser;
-use reqwest::{Error, StatusCode};
+use reqwest::StatusCode;
+use anyhow::Result;
 
 ///Cli url checker
 #[derive(Parser, Clone)]
@@ -20,18 +21,32 @@ impl UrlChecker {
     }
 
     //todo: make this function to send request as multithreading
-    pub async fn run(&self){
-        for url in &self.urls {
-            match self.send_get_request(url).await{
-                Ok(stat) => println!("url: {url} code: {stat}"),
-                Err(e) => eprintln!("{e}"),
+    pub async fn run(&mut self){
+        let mut t_vec: Vec<tokio::task::JoinHandle<()>> = Vec::new();
+        loop{
+            if let Some(url) = self.urls.pop(){
+                let handler = tokio::spawn(async move {
+                    request(&url).await;
+                });
+                t_vec.push(handler);
+            }else{
+                break;
             }
         }
+        for t in t_vec {
+            let _ = tokio::join!(t);
+        }
     }
-    
-    async fn send_get_request(&self, url: &String) -> Result<StatusCode, Error>{
+    async fn send_get_request(url: &String) -> Result<StatusCode>{
         let response = reqwest::get(url).await?;
 
         Ok(response.status())
+    }
+}
+
+async fn request(url: &String){
+    match UrlChecker::send_get_request(url).await{
+            Ok(code) => println!("url: {url} {code}"),
+            Err(e) => eprintln!("{e}")
     }
 }
