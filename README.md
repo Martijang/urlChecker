@@ -8,3 +8,5 @@ example:
 
 ### todo:
 1. making request function send POST request if needed
+2. add more worker threads 
+3. handle join error
