@@ -3,6 +3,8 @@ Cli URL checker written in rust.
 
 ## how to use
 checker.exe -u url(s)
+example:
+    checker.exe -u https://example.com https://www.google.com ..etc
 
 ### todo:
-1. make run func run as multi threading
+1. making request function send POST request if needed
