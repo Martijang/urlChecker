@@ -11,7 +11,7 @@ to make post request use:
 
     checker.exe -u url.. -p true
 
-NOTICE: post request is mostly useless especially to if you are using this tool as 
+NOTICE: post request is mostly useless, especially if you are using this tool as 
 url checking purposes.
 ### todo:
 1. handle join error <- how???
