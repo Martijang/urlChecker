@@ -53,7 +53,12 @@ impl UrlChecker {
             }
         }
         for t in t_vec {
-            let _ = tokio::join!(t);
+            match tokio::try_join!(t) {
+                Ok(_) => (),
+                Err(e) => {
+                    eprintln!("Error while joining thread: {e}")
+                }
+            }
         }
     }
     async fn send_get_request(url: &String) -> anyhow::Result<StatusCode>{
