@@ -10,6 +10,9 @@ or
 to make post request use:
 
     checker.exe -u url.. -p true
+
+NOTICE: post request is mostly useless especially to if you are using this tool as 
+url checking purposes.
 ### todo:
-1. handle join error
-2. add some tests
+1. handle join error <- how???
+2. add request body cli arguments (optional for now)
