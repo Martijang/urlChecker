@@ -75,9 +75,3 @@ async fn request(url: &String, post: bool){
         }
     }
 }
-
-//TODO: add test later
-#[test]
-fn make_example_request(){
-    todo!("Add simple request to client 127.0.0.1 and print request body")
-}
