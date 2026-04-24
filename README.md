@@ -9,7 +9,7 @@ example:
 or
 to make post request use:
 
-    checker.exe -u url.. -p true
+    checker.exe -u url.. -p true -b body(optional)
 
 NOTICE: post request is mostly useless, especially if you are using this tool as 
 url checking purposes.
