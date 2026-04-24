@@ -35,13 +35,12 @@ impl UrlChecker {
         }
     }
 
-    //todo: make this function to send request as multithreading
     pub async fn run(&mut self){
         let mut t_vec: Vec<tokio::task::JoinHandle<()>> = Vec::new();
         //cannot use iterator due to error: borrowed data escapes outside of method
         loop{
             let post = self.post;
-            let body = self.body.clone(); //cloned due to error: borrowed data escapes outside of method(again)
+            let body = self.body.clone();
             if let Some(url) = self.urls.pop(){
                 let handler = tokio::spawn(async move {
                     request(&url, post, body).await;
@@ -61,8 +60,6 @@ impl UrlChecker {
         Ok(response.status())
     }
 
-    //taking body inseated of borrow
-    //due to error: the trait bound `Body: From<&std::string::String>` is not satisfied
     async fn send_post_request(url: &String, body: Option<String>) -> anyhow::Result<StatusCode>{
         if let Some(body) = body{
             let response = reqwest::Client::new()
