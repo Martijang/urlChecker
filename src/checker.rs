@@ -38,6 +38,8 @@ impl UrlChecker {
     pub async fn run(&mut self){
         let mut t_vec: Vec<tokio::task::JoinHandle<()>> = Vec::new();
         //cannot use iterator due to error: borrowed data escapes outside of method
+        //note to my self: using arc, mutex made code lot messier. Simply using loop is btter
+        //don't change it unless you want to see a chaos.
         loop{
             let post = self.post;
             let body = self.body.clone();
