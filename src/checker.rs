@@ -99,3 +99,25 @@ async fn request(url: &String, post: bool, body: Option<String>){
         }
     }
 }
+
+#[cfg(test)]
+mod test{
+    use super::{StatusCode, UrlChecker};
+
+    #[tokio::test]
+    async fn make_test_request(){
+        let code = UrlChecker::send_get_request(&String::from("https://example.com")).await.unwrap();
+        assert_eq!(code, StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn make_invalid_post_request(){
+        //post request test purpose
+        let code = UrlChecker::send_post_request(&String::from("https://example.com"), None)
+            .await
+            .unwrap();
+
+        //example.com should return code 405
+        assert_eq!(code, StatusCode::METHOD_NOT_ALLOWED);
+    }
+}
