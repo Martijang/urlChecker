@@ -27,12 +27,7 @@ pub struct UrlChecker{
 impl UrlChecker {
     pub fn new() -> Self{
         let cli = Cli::parse();
-        if let Some(p) = cli.post {
-            let post = p;
-            Self { urls: cli.urls, post, body: cli.body }
-        }else{
-            Self { urls: cli.urls, post: false, body: None }
-        }
+        Self { urls: cli.urls, post: cli.post.unwrap_or(false), body: cli.body }
     }
 
     pub async fn run(&mut self){
