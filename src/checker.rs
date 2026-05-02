@@ -1,3 +1,5 @@
+use std::{io::{BufRead, BufReader}};
+use anyhow::{Result};
 use clap::Parser;
 use reqwest::StatusCode;
 
@@ -15,7 +17,13 @@ struct Cli{
     ///Body option for POST request if POST method is not used
     ///it will be replaced with default value. (Default is None)
     #[arg(short, long)]
-    body: Option<String>
+    body: Option<String>,
+
+    ///File option to iterate through file and making request for
+    ///each url(s)
+    ///All urls should be aligned line by line
+    #[arg(short, long)]
+    file: Option<String>
 }
 
 pub struct UrlChecker{
@@ -25,9 +33,20 @@ pub struct UrlChecker{
 }
 
 impl UrlChecker {
-    pub fn new() -> Self{
+    pub fn new() -> Result<Self>{
         let cli = Cli::parse();
-        Self { urls: cli.urls, post: cli.post.unwrap_or(false), body: cli.body }
+        if let Some(path) = cli.file{
+            let file = std::fs::File::open(path)?;
+            let reader = BufReader::new(file);
+            let mut urls = Vec::new();
+
+            for line in reader.lines() {
+                urls.push(line?);
+            }
+            Ok(Self {urls: urls, post: cli.post.unwrap_or(false), body: cli.body})
+        }else{
+            Ok(Self { urls: cli.urls, post: cli.post.unwrap_or(false), body: cli.body })
+        }
     }
 
     pub async fn run(&mut self){
@@ -115,4 +134,7 @@ mod test{
         //example.com should return code 405
         assert_eq!(code, StatusCode::METHOD_NOT_ALLOWED);
     }
+
+    // fn read_file(){
+    // }
 }
