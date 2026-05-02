@@ -14,5 +14,5 @@ to make post request use:
 NOTICE: post request is mostly useless, especially if you are using this tool as 
 url checking purposes.
 ### todo:
-1. make -f feature that can read file and sends request in the content of file
-2. fix the terrible loop
+1. fix the terrible loop
+2. add test for -f feature
