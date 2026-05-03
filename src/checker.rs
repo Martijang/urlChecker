@@ -134,7 +134,4 @@ mod test{
         //example.com should return code 405
         assert_eq!(code, StatusCode::METHOD_NOT_ALLOWED);
     }
-
-    // fn read_file(){
-    // }
 }
