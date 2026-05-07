@@ -99,11 +99,6 @@ impl UrlChecker {
             Ok(response.status())
         }
     }
-
-    #[allow(dead_code)]
-    fn get_urls(&self) -> &Vec<String>{
-        &self.urls
-    }
 }
 
 async fn request(url: &String, post: bool, body: Option<String>){
@@ -146,7 +141,7 @@ use super::{StatusCode, UrlChecker, Cli};
     #[tokio::test]
     //TODO: fix this test, why is stat_vec empty?
     //INFO: by the some reason urls vector is empty
-    //+ it's not because of #[allow(dead_code)]
+    //is it because of parse_from() ?
     async fn file_feature(){
         let mut stat_vec: Vec<StatusCode> = Vec::new();
         let checker = UrlChecker::new(
@@ -154,7 +149,7 @@ use super::{StatusCode, UrlChecker, Cli};
                 Cli::parse_from([String::from("-f ./src/urls.txt")])
             )
         ).unwrap();
-        let urls = checker.get_urls();
+        let urls = checker.urls;
         for url in urls{
             stat_vec.push(UrlChecker::send_get_request(&url).await.unwrap());
         }
