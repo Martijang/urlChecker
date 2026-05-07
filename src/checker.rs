@@ -6,7 +6,7 @@ use reqwest::StatusCode;
 ///Cli url checker
 #[derive(Parser)]
 #[command(about, long_about = None)]
-struct Cli{
+pub struct Cli{
     ///Url(s)
     #[clap(short, num_args = 1..)]
     urls: Vec<String>,
@@ -33,9 +33,10 @@ pub struct UrlChecker{
 }
 
 impl UrlChecker {
-    pub fn new() -> Result<Self>{
-        let cli = Cli::parse();
-        if let Some(path) = cli.file{
+    pub fn new(cli: Option<Cli>) -> Result<Self>{
+        // let cli = Cli::parse();
+        let cl = cli.unwrap_or(Cli::parse());
+        if let Some(path) = cl.file{
             let file = std::fs::File::open(path)?;
             let reader = BufReader::new(file);
             let mut urls = Vec::new();
@@ -43,9 +44,9 @@ impl UrlChecker {
             for line in reader.lines() {
                 urls.push(line?);
             }
-            Ok(Self {urls: urls, post: cli.post.unwrap_or(false), body: cli.body})
+            Ok(Self {urls: urls, post: cl.post.unwrap_or(false), body: cl.body})
         }else{
-            Ok(Self { urls: cli.urls, post: cli.post.unwrap_or(false), body: cli.body })
+            Ok(Self { urls: cl.urls, post: cl.post.unwrap_or(false), body: cl.body })
         }
     }
 
@@ -98,6 +99,11 @@ impl UrlChecker {
             Ok(response.status())
         }
     }
+
+    #[allow(dead_code)]
+    fn get_urls(&self) -> &Vec<String>{
+        &self.urls
+    }
 }
 
 async fn request(url: &String, post: bool, body: Option<String>){
@@ -116,7 +122,9 @@ async fn request(url: &String, post: bool, body: Option<String>){
 
 #[cfg(test)]
 mod test{
-    use super::{StatusCode, UrlChecker};
+    use clap::Parser;
+
+use super::{StatusCode, UrlChecker, Cli};
 
     #[tokio::test]
     async fn make_test_request(){
@@ -133,5 +141,23 @@ mod test{
 
         //example.com should return code 405
         assert_eq!(code, StatusCode::METHOD_NOT_ALLOWED);
+    }
+
+    #[tokio::test]
+    //TODO: fix this test, why is stat_vec empty?
+    //INFO: by the some reason urls vector is empty
+    //+ it's not because of #[allow(dead_code)]
+    async fn file_feature(){
+        let mut stat_vec: Vec<StatusCode> = Vec::new();
+        let checker = UrlChecker::new(
+            Some(
+                Cli::parse_from([String::from("-f ./src/urls.txt")])
+            )
+        ).unwrap();
+        let urls = checker.get_urls();
+        for url in urls{
+            stat_vec.push(UrlChecker::send_get_request(&url).await.unwrap());
+        }
+        assert_eq!(stat_vec, [StatusCode::OK, StatusCode::OK])
     }
 }
