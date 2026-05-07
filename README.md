@@ -14,5 +14,4 @@ to make post request use:
 NOTICE: post request is mostly useless, especially if you are using this tool as 
 url checking purposes.
 ### todo:
-1. fix the terrible loop <- I freaked this I can't do it(at least for now)
-2. add JSON request (optional)
+1. fix file_feature test
