@@ -14,4 +14,4 @@ to make post request use:
 NOTICE: post request is mostly useless, especially if you are using this tool as 
 url checking purposes.
 ### todo:
-1. fix file_feature test
+1. fix file_feature test <- Nah, I'll just work on other project now
